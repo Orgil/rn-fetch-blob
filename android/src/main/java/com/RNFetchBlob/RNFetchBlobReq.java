@@ -565,7 +565,7 @@ public class RNFetchBlobReq extends BroadcastReceiver implements Runnable {
                         // This usually mean the data is contains invalid unicode characters but still valid data,
                         // it's binary data, so send it as a normal string
                         catch(CharacterCodingException ignored) {
-                            
+
                             if(responseFormat == ResponseFormat.UTF8) {
                                 String utf8 = new String(b);
                                 callback.invoke(null, RNFetchBlobConst.RNFB_RESPONSE_UTF8, utf8);
@@ -600,7 +600,11 @@ public class RNFetchBlobReq extends BroadcastReceiver implements Runnable {
                     if (responseBody != null) {
                         String responseBodyString = null;
                         try {
-                            responseBodyString = responseBody.string();
+                          boolean isBufferDataExists = responseBody.source().buffer().size() > 0;
+                          boolean isContentExists = responseBody.contentLength() > 0;
+                          if (isBufferDataExists && isContentExists) {
+                              responseBodyString = responseBody.string();
+                          }
                         } catch(IOException exception) {
                             exception.printStackTrace();
                         }
